@@ -17,8 +17,6 @@
 package vm
 
 import (
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/research"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -315,11 +313,6 @@ func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []by
 			evm.Config.Tracer.CaptureExit(ret, startGas-gas, err)
 		}(gas)
 	}
-	c1 := caller.Address().String()
-	c2 := addr.String()
-	code := evm.StateDB.GetCode(addr)
-	tx := evm.StateDB.(*state.StateDB).TxIndex()
-	research.CaptureDelegateCall(c1, c2, code, evm.Context.BlockNumber, tx)
 	// It is allowed to call precompiles, even via delegatecall
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
